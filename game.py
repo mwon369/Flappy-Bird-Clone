@@ -1,5 +1,4 @@
 import random
-from tracemalloc import start
 import pygame
 import sys
 
@@ -7,32 +6,31 @@ import sys
 pygame.init()
 pygame.display.set_caption('Flappy Bird')
 
-# create the window that the game will be displayed on
+# initialize the window that the game will be displayed on
 screen = pygame.display.set_mode((500, 750))
 
-# load background image
+# load game art
 background_image = pygame.image.load('background.jpg')
-
-# load the bird image
 bird_image = pygame.image.load('flappybird.jpg')
 
-# variables to keep track of the birds position on the screen
+# variables to keep track of & change the birds position on the screen
 bird_x = 50
 bird_y = 300
-bird_y_change = 0.375
+bird_y_change = 4
 
-# blueprint variables for TOP obstacle dimensions/position
+# variables for the dimensions, colour and position of the obstacles
 obstacle_width = 70
 top_obstacle_height = random.randint(150, 450)
 obstacle_colour = (211, 253, 117)
 obstacle_x = 500
-obstacle_x_change = -0.25  # moves the obstacles towards the bird
-obstacle_gap = 175  # defines the size of the gap between the obstacles
+obstacle_x_change = -2.5
+obstacle_gap = 175
 
 # score/start/end menu
 score = 0
+score_list = []
 score_font = pygame.font.Font('freesansbold.ttf', 32)
-start_menu_font = pygame.font.Font('freesansbold.ttf', 28)
+menu_font = pygame.font.Font('freesansbold.ttf', 28)
 
 
 def display_bird(x, y):
@@ -79,9 +77,9 @@ def start_menu():
     bird_image = pygame.image.load('flappybird.jpg')
     screen.blit(background_image, (0, 0))
     screen.blit(bird_image, (50, 300))
-    display = start_menu_font.render(
+    start_menu_text = menu_font.render(
         "PRESS SPACEBAR TO BEGIN", True, (255, 255, 255))
-    screen.blit(display, (50, 250))
+    screen.blit(start_menu_text, (50, 250))
     pygame.display.update()
     while True:
         for event in pygame.event.get():
@@ -92,12 +90,45 @@ def start_menu():
                 return
 
 
+def game_over_menu(score, score_list):
+    # load background image
+    background_image = pygame.image.load('background.jpg')
+    screen.blit(background_image, (0, 0))
+
+    # initialize all the text
+    game_over_text = menu_font.render(
+        "GAME OVER!", True, (255, 50, 50))
+    current_score = menu_font.render(
+        f"Your score was: {score}", True, (255, 255, 255))
+    high_score = menu_font.render(
+        f"Your current high score is: {max(score_list)}", True, (50, 255, 50))
+    play_again = menu_font.render(
+        "Press TAB to play again!", True, (255, 255, 255))
+
+    # display the text
+    screen.blit(game_over_text, (150, 250))
+    screen.blit(current_score, (125, 300))
+    screen.blit(high_score, (60, 350))
+    screen.blit(play_again, (80, 400))
+    pygame.display.update()
+
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_TAB:
+                return
+
+
 start_menu()
 
 
 # game event loop
+clock = pygame.time.Clock()
 while True:
-
+    # ensures that all computers run the program at the same speed for consistency
+    clock.tick(60)
     # display background image
     screen.blit(background_image, (0, 0))
 
@@ -110,9 +141,9 @@ while True:
 
         # check for key presses to set the bird's change in y-position
         if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
-            bird_y_change = -0.75
+            bird_y_change = -8
         if event.type == pygame.KEYUP and event.key == pygame.K_SPACE:
-            bird_y_change = 0.375
+            bird_y_change = 4
 
     # move the bird
     bird_y += bird_y_change
@@ -126,18 +157,19 @@ while True:
     # move the obstacles
     obstacle_x += obstacle_x_change
 
-    # increment score and generate new obstacles if the bird doesn't hit an obstacle
+    # increment score, generate new obstacles and increase game speed everytime the player passes an obstacle
     if obstacle_x <= -10:
         score += 1
         obstacle_x = 500
+        obstacle_x_change -= 0.1
         top_obstacle_height = random.randint(150, 450)
 
+    # check for the player losing
     collision = detect_collision(
         obstacle_x, top_obstacle_height, bird_y, top_obstacle_height + obstacle_gap)
-
     if collision:
-        pygame.quit()
-        sys.exit()
+        score_list.append(score)
+        game_over_menu(score, score_list)
 
     # function calls to update the state of the game
     draw_obstacles(top_obstacle_height)
