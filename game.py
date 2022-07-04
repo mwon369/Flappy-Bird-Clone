@@ -28,7 +28,7 @@ obstacle_gap = 150
 
 # variables for the score, highscore, start and end menus
 score = 0
-score_list = []
+score_list = [0]
 score_font = pygame.font.Font('freesansbold.ttf', 32)
 menu_font = pygame.font.Font('freesansbold.ttf', 28)
 
@@ -101,15 +101,27 @@ def game_over_menu(score, score_list):
     current_score = menu_font.render(
         f"Your score was: {score}", True, (255, 255, 255))
     high_score = menu_font.render(
-        f"Your current high score is: {max(score_list)}", True, (50, 255, 50))
+        f"Your current high score is: {max(score_list)}", True, (255, 255, 255))
     play_again = menu_font.render(
         "Press TAB to play again!", True, (255, 255, 255))
+    new_high_score_1 = menu_font.render(
+        "Congratulations!", True, (50, 255, 50))
+    new_high_score_2 = menu_font.render(
+        f"Your NEW highscore is {score}!", True, (50, 255, 50))
 
     # display the text
-    screen.blit(game_over_text, (150, 250))
-    screen.blit(current_score, (125, 300))
-    screen.blit(high_score, (60, 350))
-    screen.blit(play_again, (80, 400))
+    if score > max(score_list[:-1]):
+        screen.blit(game_over_text, (150, 225))
+        screen.blit(current_score, (125, 275))
+        screen.blit(new_high_score_1, (130, 325))
+        screen.blit(new_high_score_2, (75, 375))
+        screen.blit(play_again, (80, 425))
+    else:
+        screen.blit(game_over_text, (150, 250))
+        screen.blit(current_score, (125, 300))
+        screen.blit(high_score, (60, 350))
+        screen.blit(play_again, (80, 400))
+
     pygame.display.update()
 
     while True:
