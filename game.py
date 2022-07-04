@@ -1,4 +1,5 @@
 import random
+from tracemalloc import start
 import pygame
 import sys
 
@@ -28,12 +29,12 @@ obstacle_x = 500
 obstacle_x_change = -0.25  # moves the obstacles towards the bird
 obstacle_gap = 175  # defines the size of the gap between the obstacles
 
-# score variables
+# score/start/end menu
 score = 0
 score_font = pygame.font.Font('freesansbold.ttf', 32)
+start_menu_font = pygame.font.Font('freesansbold.ttf', 28)
 
 
-# a function that can be constantly called to update the birds position on the game window
 def display_bird(x, y):
     screen.blit(bird_image, (x, y))
 
@@ -55,18 +56,43 @@ def draw_obstacles(top_obstacle_height):
 
 def detect_collision(obstacle_x, top_obstacle_height, bird_y, bottom_obstacle_y_pos):
     # check if the obstacles are vertically aligned with any part of the bird
-    # include +64 to account for the x position of the bird's front
     if obstacle_x >= 50 and obstacle_x <= 50 + 64:
         # check if the bird made contact with either obstacle
-        # include -64 because bird_y is only the y position of the bird's top
         if bird_y <= top_obstacle_height or bird_y >= bottom_obstacle_y_pos - 64:
             return True
+
+    # check if the bird makes contact with the ground
+    elif bird_y >= 570:
+        return True
+
     return False
 
 
 def display_score(score):
     display = score_font.render(f"Score: {score}", True, (255, 255, 255))
     screen.blit(display, (10, 10))
+
+
+def start_menu():
+    # load background image
+    background_image = pygame.image.load('background.jpg')
+    bird_image = pygame.image.load('flappybird.jpg')
+    screen.blit(background_image, (0, 0))
+    screen.blit(bird_image, (50, 300))
+    display = start_menu_font.render(
+        "PRESS SPACEBAR TO BEGIN", True, (255, 255, 255))
+    screen.blit(display, (50, 250))
+    pygame.display.update()
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+                return
+
+
+start_menu()
 
 
 # game event loop
