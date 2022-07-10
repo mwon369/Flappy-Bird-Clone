@@ -12,6 +12,8 @@ screen = pygame.display.set_mode((500, 750))
 # load game art
 background_image = pygame.image.load('background.jpg')
 bird_image = pygame.image.load('flappybird.jpg')
+pipe_image_bottom = pygame.image.load('pipe.png')
+pipe_image_top = pygame.transform.flip(pipe_image_bottom, False, True)
 
 # variables to keep track of & change the birds position on screen
 bird_x = 50
@@ -19,7 +21,7 @@ bird_y = 300
 bird_y_change = 4
 
 # variables for the dimensions, colour and position of the obstacles
-obstacle_width = 70
+obstacle_width = 78
 top_obstacle_height = random.randint(150, 450)
 obstacle_colour = (211, 253, 117)
 obstacle_x = 500
@@ -39,8 +41,11 @@ def display_bird(x, y):
 
 def draw_obstacles(top_obstacle_height):
     # draw top obstacle
-    pygame.draw.rect(screen, obstacle_colour, (obstacle_x, 0,
-                     obstacle_width, top_obstacle_height))
+    # pygame.draw.rect(screen, obstacle_colour, (obstacle_x, 0,
+    #                  obstacle_width, top_obstacle_height))
+
+    screen.blit(pipe_image_top, (obstacle_x, 0), (0, 560 - top_obstacle_height,
+                78, top_obstacle_height))
 
     # the y-position of where the bottom obstacle will be drawn
     bottom_obstacle_y_pos = top_obstacle_height + obstacle_gap
@@ -48,8 +53,11 @@ def draw_obstacles(top_obstacle_height):
     bottom_obstacle_height = 635 - bottom_obstacle_y_pos
 
     # draw the bottom obstacle
-    pygame.draw.rect(screen, obstacle_colour, (obstacle_x, bottom_obstacle_y_pos,
-                     obstacle_width, bottom_obstacle_height))
+    # pygame.draw.rect(screen, obstacle_colour, (obstacle_x, bottom_obstacle_y_pos,
+    #                  obstacle_width, bottom_obstacle_height))
+
+    screen.blit(pipe_image_bottom, (obstacle_x, bottom_obstacle_y_pos),
+                (0, 0, 78, bottom_obstacle_height))
 
 
 def detect_collision(obstacle_x, top_obstacle_height, bird_y, bottom_obstacle_y_pos):
