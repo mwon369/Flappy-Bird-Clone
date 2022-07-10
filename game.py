@@ -23,7 +23,6 @@ bird_y_change = 4
 # variables for the dimensions and position of the obstacles
 obstacle_width = 78
 top_obstacle_height = random.randint(150, 450)
-obstacle_colour = (211, 253, 117)
 obstacle_x = 500
 obstacle_x_change = -2.5
 obstacle_gap = 150
@@ -56,7 +55,7 @@ def draw_obstacles(top_obstacle_height):
 
 def detect_collision(obstacle_x, top_obstacle_height, bird_y, bottom_obstacle_y_pos):
     # check if the obstacles are vertically aligned with any part of the bird
-    if obstacle_x >= 50 and obstacle_x <= 50 + 80:
+    if obstacle_x >= 50 - 78 and obstacle_x <= 50 + 80:
         # check if the bird made contact with either obstacle
         if bird_y <= top_obstacle_height or bird_y >= bottom_obstacle_y_pos - 60:
             return True
@@ -178,7 +177,7 @@ while True:
         obstacle_x += obstacle_x_change
 
         # increment score, generate new obstacles and increase game speed everytime the player passes an obstacle
-        if obstacle_x <= -10:
+        if obstacle_x <= 50 - 78:
             score += 1
             obstacle_x = 500
             obstacle_x_change -= 0.1
