@@ -57,7 +57,7 @@ def detect_collision(obstacle_x, top_obstacle_height, bird_y, bottom_obstacle_y_
     # check if the obstacles are vertically aligned with any part of the bird
     if obstacle_x >= 50 - 78 and obstacle_x <= 50 + 80:
         # check if the bird made contact with either obstacle
-        if bird_y <= top_obstacle_height or bird_y >= bottom_obstacle_y_pos - 60:
+        if bird_y <= top_obstacle_height - 8 or bird_y >= bottom_obstacle_y_pos - 56:
             return True
 
     # check if the bird makes contact with the ground
@@ -180,7 +180,7 @@ while True:
         if obstacle_x <= 50 - 78:
             score += 1
             obstacle_x = 500
-            obstacle_x_change -= 0.1
+            obstacle_x_change -= 0.125
             top_obstacle_height = random.randint(150, 450)
 
         # check for the player losing
